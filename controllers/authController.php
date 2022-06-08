@@ -4,8 +4,11 @@ require_once 'sendEmails.php';
 $username = "";
 $email = "";
 $errors = [];
+// print_r($_POST);
+
 
 $conn = new mysqli('localhost', 'root', '', 'task');
+
 
 // SIGN UP USER
 if (isset($_POST['signup-btn'])) {
@@ -103,10 +106,11 @@ if (isset($_POST['login-btn'])) {
 // reser email
 
 if (isset($_POST['reset-password'])) {
-    $email =  $_POST['email'];
+    
+    $email = mysqli_real_escape_string($conn, $_POST['email']);
     // ensure that the user exists on our system
     $query = "SELECT email FROM users WHERE email='$email'";
-    $results = $query;
+    $results = mysqli_query($conn, $query);
   
     if (empty($email)) {
       array_push($errors, "Your email is required");
@@ -119,7 +123,7 @@ if (isset($_POST['reset-password'])) {
     if (count($errors) == 0) {
       // store token in the password-reset database table against the user's email
       $sql = "INSERT INTO password_resets(email, token) VALUES ('$email', '$token')";
-      $results = mysqli_query($db, $sql);
+      $results = mysqli_query($conn, $sql);
   
       $transport = (new Swift_SmtpTransport('smtp.mailtrap.io', 465, 'tls'))
   ->setUsername('378fac2c584972')
@@ -149,25 +153,36 @@ if (isset($_POST['reset-password'])) {
 
   // ENTER A NEW PASSWORD
 if (isset($_POST['new_password'])) {
-    $new_pass = mysqli_real_escape_string($db, $_POST['new_pass']);
-    $new_pass_c = mysqli_real_escape_string($db, $_POST['new_pass_c']);
   
-    // Grab to token that came from the email link
-    $token = $_SESSION['token'];
-    if (empty($new_pass) || empty($new_pass_c)) array_push($errors, "Password is required");
-    if ($new_pass !== $new_pass_c) array_push($errors, "Password do not match");
-    if (count($errors) == 0) {
-      // select email address of user from the password_reset table 
-      $sql = "SELECT email FROM password_reset WHERE token='$token' LIMIT 1";
-      $results = mysqli_query($db, $sql);
-      $email = mysqli_fetch_assoc($results)['email'];
+  $new_pass = mysqli_real_escape_string($conn, $_POST['new_pass']);
+  $new_pass_c = mysqli_real_escape_string($conn, $_POST['new_pass_c']);
+
   
-      if ($email) {
-        $new_pass = md5($new_pass);
-        $sql = "UPDATE users SET password='$new_pass' WHERE email='$email'";
-        $results = mysqli_query($db, $sql);
-        header('location: index.php');
-      }
+
+  // Grab to token that came from the email link
+  $token = mysqli_real_escape_string($conn, $_POST['token']);
+  //grab email that came from the link
+  $email = mysqli_real_escape_string($conn, $_POST['email']);
+
+  //echo $token;
+
+  if (empty($new_pass) || empty($new_pass_c)) array_push($errors, "Password is required");
+  if ($new_pass !== $new_pass_c) array_push($errors, "Password do not match");
+  if (count($errors) == 0) {
+    // select email address of user from the password_reset table 
+    $sql = "SELECT email FROM password_resets WHERE token='$token' LIMIT 1";
+    
+    $results = mysqli_query($conn, $sql);
+    
+    $email = mysqli_fetch_assoc($results)['email'];
+    // echo $new_pass;
+    // echo $email;
+    if ($email) {
+      $new_pass = password_hash($new_pass, PASSWORD_DEFAULT);
+      $sql = "UPDATE users SET password='$new_pass' WHERE email='$email'";
+      $results = mysqli_query($conn, $sql);
+      header('location: pending.php');
     }
   }
-  ?>
+}
+?>

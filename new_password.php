@@ -1,12 +1,9 @@
-<?php
-
-	$email=$_GET['email'];
-	echo $email;
-	$token= $_GET['token'];
-	echo $token;
+<?php include 'controllers/authController.php';
+session_start();
+ $_SESSION['email']=$_GET['email'];
+ $_SESSION['token']=$_GET['token'];
 
 ?>
-<?php include 'controllers/authController.php' ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -29,8 +26,8 @@
 			<label>Confirm new password</label>
 			<input type="password" name="new_pass_c">
 		</div>
-		<input type="hidden" name="token" value="<?php $_GET['token']; ?>">
-		<input type="hidden" name="email" value="<?php $_GET['email']; ?>">
+		<input type="hidden" name="token" value="<?php echo $_SESSION['token']; ?>">
+		<input type="hidden" name="email" value="<?php echo $_SESSION['email']; ?>">
 		<div class="form-group">
 			<button type="submit" name="new_password" class="login-btn">Submit</button>
 		</div>
