@@ -13,11 +13,16 @@ $conn = new mysqli('localhost', 'root', '', 'task');
 
   // ENTER A NEW PASSWORD
   if (isset($_POST['new_password'])) {
+    // Grab to token that came from the email link
+    $token = mysqli_real_escape_string($conn, $_POST['token']);
+    //grab email that came from the link
+    $email = mysqli_real_escape_string($conn, $_POST['email']);
     if (empty($_POST['new_pass']) && empty($_POST['new_pass_c'])) {
       $message_code = '1004';
       $status = 'error';
   }
-  else if (isset($_POST['new_password']) !== $_POST['new_pass_c']) {
+  else if (isset($_POST['new_pass']) && $_POST['new_pass'] !== $_POST['new_pass_c']) {
+    
     $message_code = '1003';
     $status = 'error';
 }
@@ -29,10 +34,7 @@ else{
   
     
   
-    // Grab to token that came from the email link
-    $token = mysqli_real_escape_string($conn, $_POST['token']);
-    //grab email that came from the link
-    $email = mysqli_real_escape_string($conn, $_POST['email']);
+  
   
     //echo $token;
   
@@ -54,7 +56,7 @@ else{
       }
     }
     if ($message_code) {
-      header('Location: new_password.php?status='.$status.'&code='.$message_code);
+      header('Location: new_password.php?status='.$status.'&code='.$message_code.'&token='.$token.'&email='.$email.'');
   }
   }
   // send reset email
