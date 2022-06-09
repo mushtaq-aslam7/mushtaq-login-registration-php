@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="main.css">
   <title>User verification system PHP</title>
   
-//error handling
+<!-- error message -->
 <?php if (count($errors) > 0): ?>
   <div class="alert alert-danger">
     <?php foreach ($errors as $error): ?>

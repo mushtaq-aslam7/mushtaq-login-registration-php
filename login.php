@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.min.css" />
   <link rel="stylesheet" href="main.css">
   <title>User verification system PHP - Login</title>
-  //error handling
+  <!-- error message -->
 <?php if (count($errors) > 0): ?>
   <div class="alert alert-danger">
     <?php foreach ($errors as $error): ?>

@@ -19,6 +19,7 @@ if (isset($_GET['token'])) {
             $_SESSION['verified'] = true;
             $_SESSION['message'] = "Your email address has been verified successfully";
             $_SESSION['type'] = 'alert-success';
+            
             header('location: index.php');
             exit(0);
         }
@@ -28,3 +29,4 @@ if (isset($_GET['token'])) {
 } else {
     echo "No token provided!";
 }
+?>

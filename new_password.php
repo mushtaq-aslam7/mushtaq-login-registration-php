@@ -1,5 +1,5 @@
-<?php include 'controllers/authController.php';
-session_start();
+<?php 
+include 'resetLogic.php';
  $_SESSION['email']=$_GET['email'];
  $_SESSION['token']=$_GET['token'];
 

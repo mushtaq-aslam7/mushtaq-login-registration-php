@@ -1,4 +1,5 @@
-<?php include 'controllers/authController.php' ?>
+<?php 
+include 'resetLogic.php' ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
