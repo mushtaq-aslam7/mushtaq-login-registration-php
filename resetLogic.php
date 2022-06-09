@@ -2,8 +2,10 @@
 
 session_start();
 require_once './vendor/autoload.php';
-$errors = [];
+
 $user_id = "";
+$message_code = '';
+$error = '';
 
 $conn = new mysqli('localhost', 'root', '', 'task');
 
@@ -11,6 +13,16 @@ $conn = new mysqli('localhost', 'root', '', 'task');
 
   // ENTER A NEW PASSWORD
   if (isset($_POST['new_password'])) {
+    if (empty($_POST['new_pass']) && empty($_POST['new_pass_c'])) {
+      $message_code = '1004';
+      $status = 'error';
+  }
+  else if (isset($_POST['new_password']) !== $_POST['new_pass_c']) {
+    $message_code = '1003';
+    $status = 'error';
+}
+
+else{
   
     $new_pass = mysqli_real_escape_string($conn, $_POST['new_pass']);
     $new_pass_c = mysqli_real_escape_string($conn, $_POST['new_pass_c']);
@@ -24,9 +36,8 @@ $conn = new mysqli('localhost', 'root', '', 'task');
   
     //echo $token;
   
-    if (empty($new_pass) || empty($new_pass_c)) array_push($errors, "Password is required");
-    if ($new_pass !== $new_pass_c) array_push($errors, "Password do not match");
-    if (count($errors) == 0) {
+    
+    
       // select email address of user from the password_reset table 
       $sql = "SELECT email FROM password_resets WHERE token='$token' LIMIT 1";
       
@@ -42,25 +53,35 @@ $conn = new mysqli('localhost', 'root', '', 'task');
         header('location: changed.php');
       }
     }
+    if ($message_code) {
+      header('Location: new_password.php?status='.$status.'&code='.$message_code);
+  }
   }
   // send reset email
 
 if (isset($_POST['reset-password'])) {
+  
+  if (empty($_POST['email'])) {
+    $message_code = '1000';
+    $status = 'error';
+}
+else
+{
     
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     // ensure that the user exists on our system
     $query = "SELECT email FROM users WHERE email='$email'";
     $results = mysqli_query($conn, $query);
   
-    if (empty($email)) {
-      array_push($errors, "Your email is required");
-    }else if(mysqli_num_rows($results) <= 0) {
-      array_push($errors, "Sorry, no user exists on our system with that email");
+    if(mysqli_num_rows($results) <= 0) {
+      $message_code = '1007';
+      $status = 'error';
     }
+
+    else{
     // generate a unique random token of length 100
     $token = bin2hex(random_bytes(50));
   
-    if (count($errors) == 0) {
       // store token in the password-reset database table against the user's email
       $sql = "INSERT INTO password_resets(email, token) VALUES ('$email', '$token')";
       $results = mysqli_query($conn, $sql);
@@ -88,4 +109,10 @@ if (isset($_POST['reset-password'])) {
   
     }
   }
+  if ($message_code) {
+    header('Location: enter_email.php?status='.$status.'&code='.$message_code);
+}
+}
+
+
   ?>

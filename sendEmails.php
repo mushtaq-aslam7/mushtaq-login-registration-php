@@ -1,5 +1,5 @@
 <?php
-require_once './vendor/autoload.php';
+require_once '../vendor/autoload.php';
 
 // Create the Transport
 $transport = (new Swift_SmtpTransport('smtp.mailtrap.io', 465, 'tls'))

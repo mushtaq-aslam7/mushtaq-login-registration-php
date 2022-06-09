@@ -1,4 +1,7 @@
-<?php include 'controllers/authController.php' ?>
+<?php
+
+include "messages.php";
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,37 +14,37 @@
   <link rel="stylesheet" href="main.css">
   <title>User verification system PHP</title>
   
-<!-- error message -->
-<?php if (count($errors) > 0): ?>
-  <div class="alert alert-danger">
-    <?php foreach ($errors as $error): ?>
-    <li>
-      <?php echo $error; ?>
-    </li>
-    <?php endforeach;?>
-  </div>
-<?php endif;?>
 </head>
 <body>
   <div class="container">
     <div class="row">
       <div class="col-md-4 offset-md-4 form-wrapper auth">
+      <?php 
+          if (isset($_GET['status'])) {
+            if ($_GET['status'] == 'error') {
+              echo "<div class='alert alert-danger'>".$messages[$_REQUEST['code']]."</div>";
+            } else {
+              echo "<div class='alert alert-success'>".$messages[$_REQUEST['code']]."</div>";
+            }
+          }
+
+        ?>
         <h3 class="text-center form-title">Sign Up</h3>
-        <form action="signup.php" method="post">
+        <form action="controllers/authController.php" method="post">
           <div class="form-group">
-            <label>Username</label>
-            <input type="text" name="username" class="form-control form-control-lg" value="<?php echo $username; ?>">
+            <label>Username <strong class="text-danger">*</strong></label>
+            <input type="text" name="username" class="form-control form-control-lg" value="<?php echo ($username) ?? ''; ?>">
           </div>
           <div class="form-group">
-            <label>Email</label>
-            <input type="text" name="email" class="form-control form-control-lg" value="<?php echo $email; ?>">
+            <label>Email<strong class="text-danger">*</strong></label>
+            <input type="text" name="email" class="form-control form-control-lg" value="<?php echo ($email) ?? ''; ?>">
           </div>
           <div class="form-group">
-            <label>Password</label>
+            <label>Password<strong class="text-danger">*</strong></label>
             <input type="password" name="password" class="form-control form-control-lg">
           </div>
           <div class="form-group">
-            <label>Password Confirm</label>
+            <label>Password Confirm<strong class="text-danger">*</strong></label>
             <input type="password" name="passwordConf" class="form-control form-control-lg">
           </div>
           <div class="form-group">

@@ -1,5 +1,6 @@
-<?php include 'controllers/authController.php'?>
+
 <?php
+session_start();
 // redirect user to login page if they're not logged in
 if (empty($_SESSION['id'])) {
     header('location: login.php');
